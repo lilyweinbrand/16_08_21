@@ -1,2 +1,110 @@
-<div>Hello World</div>;
-<div>Hello World</div>;
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="contentful.js"></script>
+
+</head>
+<body>
+    <div>Hello World</div>
+    <div id="content" class="content-container border border-red-400">
+      
+      container
+
+      <div class="all-projects">
+        <!-- all projects go here -->
+      </div>
+    </div>
+
+    <script>
+      var contentfulClient = contentful.createClient({
+        accessToken: 'GnIjJ4Y7hI8fGth4ULAKMNqjyYObAXVs2nn6i1ixmjM',
+        space: 'xuo39tksv2ix'
+      })
+      
+      var PRODUCT_CONTENT_TYPE_ID = 'projectImage'
+      
+      var container = document.getElementById('content');
+      var project = document.getElementById('project');
+      
+      contentfulClient.getEntries({
+          content_type: PRODUCT_CONTENT_TYPE_ID
+        })
+        .then(function(entries) {
+        //  container.innerHTML = renderProjects(entries.items);
+         console.log('1 got all items from contentful. they are:', entries.items);
+
+         console.log('2 do something for each item');
+         entries.items = entries.items.map(handleAllItems)
+
+         console.log('3 complete.');
+
+          // renderFirstProject(entries)
+
+        })
+
+        function handleAllItems(item) {
+          // item.fields = 'nothing'
+          console.log('do something for this item', item.fields.title, '...');
+          renderAnyProject(item);
+          return item
+        }
+
+        function renderAnyProject(item) {
+
+            const currentEntry = item
+            const title = currentEntry.fields.title
+            const imageSource123 = currentEntry.fields.heroImage.fields.file.url
+            const date = currentEntry.fields.date
+            const description = currentEntry.fields.description
+
+            console.log('creating the image and display title for ', title);
+
+            document.querySelector('.all-projects').innerHTML += `
+            <div class="my-project project-${currentEntry.sys.id}">
+              <div class="project-image"><img src="${imageSource123}"></div>
+              <p class="project-title">${title}</p> 
+              <p class="project-date">${date}</p>
+              <p class="project-description">${description}</p>
+            </div>
+            `
+        }
+
+      //This code will not run as it isn't being called - just for a signle entry//  
+
+      /*  function renderFirstProject(entries) {
+
+          const firstEntry = entries.items[0]
+         const title = firstEntry.fields.title
+         console.log(title);
+         let imageSource123 = firstEntry.fields.heroImage.fields.file.url
+
+        document.querySelector('.all-projects').innerHTML = `
+          <div class="my-project project-${firstEntry.sys.id}">
+            <div class="project-image"><img src="${imageSource123}"></div>
+            <p class="project-title">${firstEntry.fields.title}</p> 
+            <p class="project-date">${firstEntry.fields.date}</p>
+            <p class="project-description">${firstEntry.fields.description}</p>
+          </div>
+         `
+        }
+
+        */
+
+        //  document.querySelector('.project-title').innerHTML = firstEntry.fields.title
+        //  document.querySelector('.project-date').innerHTML = firstEntry.fields.date
+        //  document.querySelector('.project-description').innerHTML = firstEntry.fields.description
+        //  document.querySelector('.project-image').innerHTML = firstEntry.fields.heroImage.fields.file.url
+
+        //  document.querySelector('.project-image img').setAttribute('src', firstEntry.fields.heroImage.fields.file.url) 
+        // document.querySelector('.project-image').innerHTML = `
+        //   <img src="${firstEntry.fields.heroImage.fields.file.url}">
+        // `
+        
+        // document.querySelector('.project-image').innerHTML = '<img class="test-image-123" src="' + imageSource123 + '">';
+        // document.querySelector('.project-image').innerHTML = 'a' + 'b' + 'c'
+      
+      
+      </script>
+</body>
+</html>
